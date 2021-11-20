@@ -1,0 +1,3 @@
+[submodule "fluentd-kubernetes-daemonset"]
+	path = fluentd-kubernetes-daemonset
+	url = https://github.com/fluent/fluentd-kubernetes-daemonset/

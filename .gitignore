@@ -1,0 +1,5 @@
+pkg/
+vendor/
+.bundle/
+.vscode/
+fluentd-kubernetes-daemonset/
