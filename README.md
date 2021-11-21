@@ -1,6 +1,6 @@
 # fluent-plugin-ease-log-formatter
 
-[Fluentd](https://fluentd.org/) formatter plugin to convert records to easelog formation dedicated to parsing by the EaseStash
+[Fluentd](https://fluentd.org/) formatter plugin to convert records to easelog formation which is dedicated to be parsed by the EaseStash
 
 ## Build image
 
