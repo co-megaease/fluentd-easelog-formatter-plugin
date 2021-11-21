@@ -30,7 +30,7 @@ module Fluent
         super
       end
 
-      # ^(?<date>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.[0-9]+Z)\s+(?<logLevel>[Aa]lert|ALERT|[Tt]race|TRACE|[Dd]ebug|DEBUG|[Nn]otice|NOTICE|[Ii]nfo|INFO|[Ww]arn?(?:ing)?|WARN?(?:ING)?|[Ee]rr?(?:or)?|ERR?(?:OR)?|[Cc]rit?(?:ical)?|CRIT?(?:ICAL)?|[Ff]atal|FATAL|[Ss]evere|SEVERE|EMERG(?:ENCY)?|[Ee]merg(?:ency)?)\s+(?<location>[^\s]+)\s+(?<content>.*)$
+      # ^(?<date>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.[0-9]+Z)\s+(?<logLevel>[Aa]lert|ALERT|[Tt]race|TRACE|[Dd]ebug|DEBUG|[Nn]otice|NOTICE|[Ii]nfo|INFO|[Ww]arn?(?:ing)?|WARN?(?:ING)?|[Ee]rr?(?:or)?|ERR?(?:OR)?|[Cc]rit?(?:ical)?|CRIT?(?:ICAL)?|[Ff]atal|FATAL|[Ss]evere|SEVERE|EMERG(?:ENCY)?|[Ee]merg(?:ency)?)\s+(?<location>[^\s]+)\s+(?<contents>.*)$
       # format := "a=iot-mapping-mgmt,t=794b25e67ebdda86,s=794b25e67ebdda86,d=2021-10-16T07:46:33.160Z,k=INFO ,p=http-nio-18082-exec-2,l=c.z.i.i.m.api.ForwardInfoController - get forwardInfo of 2"
       def format(_tag, _time, record)
         values = []
@@ -39,9 +39,9 @@ module Fluent
         #### traceId
         values << 't=,s='
         #### date
-        values << 'd=' + record['date']
+        values << 'd=' + record['date'].to_s
         #### level
-        values << 'k=' + record['logLevel']
+        values << 'k=' + record['logLevel'].to_s
         #### positon
         # record['location']
         values << 'p=' + record['location'].to_s + ' - ' + record['contents'].to_s

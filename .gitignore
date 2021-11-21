@@ -2,4 +2,7 @@ pkg/
 vendor/
 .bundle/
 .vscode/
-fluentd-kubernetes-daemonset/
+fluentd-kubernetes-daemonset
+tmp.log
+tmp.log.pos
+nohup.out
