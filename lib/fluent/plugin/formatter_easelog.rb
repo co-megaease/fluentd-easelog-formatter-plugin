@@ -34,17 +34,37 @@ module Fluent
       # format := "a=iot-mapping-mgmt,t=794b25e67ebdda86,s=794b25e67ebdda86,d=2021-10-16T07:46:33.160Z,k=INFO ,p=http-nio-18082-exec-2,l=c.z.i.i.m.api.ForwardInfoController - get forwardInfo of 2"
       def format(_tag, _time, record)
         values = []
+
+        contents = if record['contents'].nil?
+                     ''
+                   else
+                     record['contents']
+                   end
+        details = contents.scan(/tid=([^\s]+)\s+sid=([^\s]+)\s+(.*)/)
+        if details.nil? || details.first.nil?
+          tid = ''
+          sid = ''
+          content = contents
+        else
+          tid = details.first.first.to_s unless details.first.first.nil?
+          sid = details.first[1].to_s if details.first.length == 3
+          content = details.first.last.to_s unless details.first.last.nil?
+        end
+
+        tid = '' if tid == '<nil>'
+        sid = '' if sid == '<nil>'
+
         ### application
         values << 'a=' + service_name
         #### traceId
-        values << 't=,s='
+        values << 't=' + tid + ',s=' + sid
         #### date
         values << 'd=' + record['date'].to_s
         #### level
         values << 'k=' + record['logLevel'].to_s
         #### positon
         # record['location']
-        values << 'p=' + record['location'].to_s + ' - ' + record['contents'].to_s
+        values << 'p=' + record['location'].to_s + ' - ' + content.to_s
         values.join(',')
       end
     end
