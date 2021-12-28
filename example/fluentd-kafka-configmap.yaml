@@ -1,0 +1,60 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: fluentd-kafka-config-v0.0.1
+  namespace: default
+  labels:
+    addonmanager.kubernetes.io/mode: Reconcile
+data:
+  fluent.conf: |-
+    <system>
+      root_dir /tmp/fluentd-kafka-buffers/
+    </system>
+    <source>
+      @id fluentd-easegress-mqtt.log
+      @type tail
+      tag mqtt.easegress
+      path /var/log/containers/easegress-*.log
+      pos_file /var/log/fluentd-kafka-easesgress-pos.log.pos
+      read_from_head false
+      <parse>
+        @type multi_format
+        <pattern>
+          format json
+          time_key time
+          time_type string
+          time_format %Y-%m-%dT%H:%M:%S.%NZ
+        </pattern>
+      </parse>
+    </source>
+    <filter mqtt.easegress>
+      @type parser
+      key_name log
+      reserve_data true
+      <parse>
+        @type multi_format
+      <pattern>
+        format json
+      </pattern>
+      <pattern>
+         format regexp
+         expression /^(?<date>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.[0-9]+Z)\s+\e\[[0-9;]*m(?<logLevel>INFO|DEBUG|WARN|ERROR)\e\[[0-9;]*m\s+(?<location>[^\s]+)\s+(?<contents>.*)$/
+         time_key time
+         time_format %Y-%m-%d %H:%M:%S.%NZ
+         timezone +00:00
+       </pattern>
+     </parse>
+    </filter>
+    <match mqtt.easegress>
+      @type kafka2
+      brokers kafka-1:9092,kafka-2:9092,kafka-3:9092
+      topic_key topic
+      default_topic logs
+      <format>
+        @type easelog
+        service_name "easegress-mqtt"
+      </format>
+      <buffer topic>
+        flush_interval 5s
+      </buffer>
+    </match>
